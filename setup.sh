@@ -91,5 +91,14 @@ echo "Google Chrome and Visual Studio Code have been installed."
 google-chrome --version
 code --version
 
+# Download the image
+wget -O /tmp/temp_wallpaper.png "https://i.redd.it/g8ud4yocwbeb1.png"
+
+# Set the wallpaper using `gsettings` (for GNOME or Ubuntu)
+gsettings set org.gnome.desktop.background picture-uri "file:///tmp/temp_wallpaper.png"
+
+# Optional: Clean up the downloaded file
+rm /tmp/temp_wallpaper.png
+
 echo "Installation complete! ✅"
 
