@@ -15,9 +15,6 @@ sudo apt update -y
 echo "Installing Kali tools..."
 sudo apt install -y kali-linux-default kali-linux-top10 kali-linux-everything
 
-echo "Installation complete. Reboot recommended."
-
-
 echo "Updating package list..."
 sudo apt update -y && sudo apt upgrade -y
 
@@ -64,6 +61,35 @@ sudo apt install docker-ce
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo docker --version
+
+sudo apt update
+
+# Install dependencies for Google Chrome
+sudo apt install -y wget curl gnupg2
+
+# Add Google Chrome repository and key
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+
+# Install Google Chrome
+sudo apt update
+sudo apt install -y google-chrome-stable
+
+# Install dependencies for VS Code
+sudo apt install -y software-properties-common apt-transport-https
+
+# Add Microsoft GPG key and repository for VS Code
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+
+# Install VS Code
+sudo apt update
+sudo apt install -y code
+
+# Confirm installations
+echo "Google Chrome and Visual Studio Code have been installed."
+google-chrome --version
+code --version
 
 echo "Installation complete! ✅"
 
