@@ -91,6 +91,16 @@ echo "Google Chrome and Visual Studio Code have been installed."
 google-chrome --version
 code --version
 
+sudo apt update
+# Install neofetch
+sudo apt install -y neofetch
+
+# Add neofetch to the terminal startup by editing the .bashrc file
+echo "neofetch" >> ~/.bashrc
+
+# Notify user of successful installation
+echo "Neofetch has been installed and set to run on terminal startup."
+
 # Download the image
 wget -O /tmp/temp_wallpaper.png "https://i.redd.it/g8ud4yocwbeb1.png"
 
