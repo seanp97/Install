@@ -18,8 +18,6 @@ sudo apt install -y kali-linux-default kali-linux-top10 kali-linux-everything
 echo "Installation complete. Reboot recommended."
 
 
-#!/bin/bash
-
 echo "Updating package list..."
 sudo apt update -y && sudo apt upgrade -y
 
