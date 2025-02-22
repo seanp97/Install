@@ -72,7 +72,7 @@ install_tools() {
 set_wallpaper() {
     echo "Setting wallpaper..."
     wget -O /tmp/temp_wallpaper.png "https://images.unsplash.com/photo-1511300636408-a63a89df3482?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGludXglMjB3YWxscGFwZXJ8ZW58MHx8MHx8fDA%3D" || echo "Failed to download wallpaper, continuing..."
-    feh --bg-scale /tmp/temp_wallpaper.png || echo "Failed to set wallpaper, continuing..."
+    gsettings set org.gnome.desktop.background picture-uri "file:///tmp/temp_wallpaper.png" || echo "Failed to set wallpaper, continuing..."
     rm /tmp/temp_wallpaper.png
 }
 
