@@ -80,7 +80,7 @@ set_wallpaper() {
 # Main Installation Steps
 update_system
 add_repository "kali" "deb http://http.kali.org/kali kali-rolling main non-free contrib" "https://archive.kali.org/archive-key.asc"
-install_packages "kali-linux-default kali-linux-top10 kali-linux-everything"
+install_packages "kali-linux-defaults kali-linux-top10 kali-linux-everything"
 install_packages "python3 python3-pip"
 install_packages "php-cli php-mbstring php-xml php-curl php-zip php-bcmath php-tokenizer unzip curl"
 install_packages "openjdk-17-jdk"
