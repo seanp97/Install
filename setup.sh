@@ -44,10 +44,28 @@ install_vscode() {
     sudo apt install -y code || echo "Failed to install VS Code, continuing..."
 }
 
-# Function to install tools
+# Function to install Notion desktop
+install_notion() {
+    echo "Installing Notion desktop..."
+    wget -qO- https://notion.davidbailey.codes/notion-linux.list | sudo tee /etc/apt/sources.list.d/notion-linux.list
+    wget -qO- https://notion.davidbailey.codes/notion.asc | gpg --dearmor | sudo tee /usr/share/keyrings/notion-keyring.gpg > /dev/null
+    sudo apt update
+    sudo apt install -y notion-app-enhanced || echo "Failed to install Notion, continuing..."
+}
+
+# Function to install Spotify
+install_spotify() {
+    echo "Installing Spotify..."
+    curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/spotify-keyring.gpg > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/spotify-keyring.gpg] http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list > /dev/null
+    sudo apt update
+    sudo apt install -y spotify-client || echo "Failed to install Spotify, continuing..."
+}
+
+# Function to install requested security tools
 install_tools() {
-    echo "Installing security tools: SQLMAP, NMAP, Reaver, Wifite, Nikto, Burpsuite..."
-    install_packages "sqlmap nmap reaver wifite nikto burpsuite"
+    echo "Installing SQLMAP, NMAP, Reaver, Wifite, Nikto, Burpsuite..."
+    sudo apt install -y sqlmap nmap reaver wifite nikto burpsuite || echo "Failed to install tools, continuing..."
 }
 
 # Function to set wallpaper
@@ -74,6 +92,8 @@ sudo mv composer.phar /usr/local/bin/composer
 install_docker
 install_chrome
 install_vscode
+install_notion
+install_spotify
 set_wallpaper
 
 echo "Installation complete! ✅"
