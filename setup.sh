@@ -14,22 +14,19 @@ install_packages() {
     sudo apt install -y $1 || echo "Failed to install $1, continuing..."
 }
 
-# Function to add a repository and key
+# Function to add a repository and key securely
 add_repository() {
     echo "Adding repository: $1..."
     echo "$2" | sudo tee /etc/apt/sources.list.d/$1.list
-    for i in {1..3}; do
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $3 && break || echo "Retrying key import..."
-        sleep 5
-    done
+    curl -fsSL "$3" | sudo tee /usr/share/keyrings/$1-archive-keyring.gpg > /dev/null
 }
 
 # Function to install Docker
 install_docker() {
     echo "Installing Docker..."
     sudo apt install -y apt-transport-https ca-certificates curl software-properties-common || echo "Failed to install dependencies for Docker, continuing..."
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - || echo "Failed to add Docker key, continuing..."
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt update
     sudo apt install -y docker-ce || echo "Failed to install Docker, continuing..."
     sudo systemctl start docker
@@ -39,8 +36,8 @@ install_docker() {
 # Function to install Google Chrome
 install_chrome() {
     echo "Installing Google Chrome..."
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add - || echo "Failed to add Chrome key, continuing..."
-    echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+    curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /usr/share/keyrings/google-chrome-keyring.gpg > /dev/null
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome-keyring.gpg] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
     sudo apt update
     sudo apt install -y google-chrome-stable || echo "Failed to install Chrome, continuing..."
 }
@@ -48,40 +45,17 @@ install_chrome() {
 # Function to install VS Code
 install_vscode() {
     echo "Installing Visual Studio Code..."
-    wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - || echo "Failed to add VS Code key, continuing..."
-    sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+    curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft-keyring.gpg > /dev/null
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-keyring.gpg] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
     sudo apt update
     sudo apt install -y code || echo "Failed to install VS Code, continuing..."
-}
-
-# Function to install Neofetch
-install_neofetch() {
-    echo "Installing Neofetch..."
-    sudo apt install -y neofetch || echo "Failed to install Neofetch, continuing..."
-    echo "neofetch" >> ~/.bashrc
-}
-
-# Function to install MySQL
-install_mysql() {
-    echo "Installing MySQL Server..."
-    sudo apt install -y mysql-server || echo "Failed to install MySQL, continuing..."
-    sudo systemctl start mysql
-    sudo systemctl enable mysql
-}
-
-# Function to install PostgreSQL
-install_postgresql() {
-    echo "Installing PostgreSQL..."
-    sudo apt install -y postgresql postgresql-contrib || echo "Failed to install PostgreSQL, continuing..."
-    sudo systemctl start postgresql
-    sudo systemctl enable postgresql
 }
 
 # Function to install Notion desktop
 install_notion() {
     echo "Installing Notion desktop..."
     wget -qO- https://notion.davidbailey.codes/notion-linux.list | sudo tee /etc/apt/sources.list.d/notion-linux.list
-    wget -qO - https://notion.davidbailey.codes/notion.asc | sudo apt-key add - || echo "Failed to add Notion key, continuing..."
+    wget -qO- https://notion.davidbailey.codes/notion.asc | gpg --dearmor | sudo tee /usr/share/keyrings/notion-keyring.gpg > /dev/null
     sudo apt update
     sudo apt install -y notion-app-enhanced || echo "Failed to install Notion, continuing..."
 }
@@ -89,8 +63,8 @@ install_notion() {
 # Function to install Spotify
 install_spotify() {
     echo "Installing Spotify..."
-    curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add - || echo "Failed to add Spotify key, continuing..."
-    echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+    curl -sS https://download.spotify.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/spotify-keyring.gpg > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/spotify-keyring.gpg] http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list > /dev/null
     sudo apt update
     sudo apt install -y spotify-client || echo "Failed to install Spotify, continuing..."
 }
@@ -105,7 +79,7 @@ set_wallpaper() {
 
 # Main Installation Steps
 update_system
-add_repository "kali" "deb http://http.kali.org/kali kali-rolling main non-free contrib" "74B6B1C3B4A2B5E9"
+add_repository "kali" "deb http://http.kali.org/kali kali-rolling main non-free contrib" "https://archive.kali.org/archive-key.asc"
 install_packages "kali-linux-default kali-linux-top10 kali-linux-everything"
 install_packages "python3 python3-pip"
 install_packages "php-cli php-mbstring php-xml php-curl php-zip php-bcmath php-tokenizer unzip curl"
@@ -120,9 +94,6 @@ sudo mv composer.phar /usr/local/bin/composer
 install_docker
 install_chrome
 install_vscode
-install_neofetch
-install_mysql
-install_postgresql
 install_notion
 install_spotify
 set_wallpaper
